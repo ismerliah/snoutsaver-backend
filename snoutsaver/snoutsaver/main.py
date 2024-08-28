@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"message": "SnoutSaver API"}
+def create_app():
+    app = FastAPI()
+    return app
