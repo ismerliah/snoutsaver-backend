@@ -6,6 +6,10 @@ from . import users
 from . import categories
 from . import records
 
+from .users import *
+from .categories import *
+from .records import *
+
 
 connect_args = {}
 

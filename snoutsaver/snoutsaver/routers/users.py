@@ -1,3 +1,5 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/users")
+from .. import models
+
+router = APIRouter(tags=["User"], prefix="/users")

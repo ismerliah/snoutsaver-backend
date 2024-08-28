@@ -1,3 +1,5 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/categories")
+from .. import models
+
+router = APIRouter(tags=["Category"], prefix="/categories")
