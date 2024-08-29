@@ -5,7 +5,7 @@ from typing import Optional,Annotated
 from sqlmodel import Field, SQLModel, select, func, Session
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from snoutsaver.snoutsaver.models.records import Record,Records
+from snoutsaver.models.records import Record,Records
 
 from .. import models
 
