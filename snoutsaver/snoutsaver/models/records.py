@@ -11,6 +11,7 @@ class BaseRecord(BaseModel):
     amount: float
     currency: str
     type: str
+    category_id: int
 
 class Records(BaseModel):
     id: int
@@ -31,6 +32,7 @@ class DBRecord(BaseRecord, SQLModel, table=True):
     amount: float
     currency: str
     type: str
+    category_name: str
     record_date: datetime.datetime = Field(default=datetime.datetime.now)
 
 class RecordList(BaseModel):

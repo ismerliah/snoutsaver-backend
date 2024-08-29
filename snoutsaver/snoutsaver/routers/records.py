@@ -1,10 +1,6 @@
-from email import message
 from fastapi import APIRouter, HTTPException, Depends, Query
 
 from typing import Optional,Annotated
-
-from flask import session
-from flask_login import AnonymousUserMixin
 from sqlmodel import Field, SQLModel, select, func, Session
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -26,7 +22,7 @@ async def create_record(
         raise HTTPException(status_code=404, detail=" data not found ;( ")
     
     data = await session.execute(
-        select(models.DBRecord).where(models.DBRecord.name == record.name)
+        select(models.DBRecord).where(models.DBRecord.id == record.id)
     )
     
     db_record = models.DBRecord.model_validate(record)
