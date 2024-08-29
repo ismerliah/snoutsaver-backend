@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from .. import models
+from .. import models, deps
 
 router = APIRouter(tags=["Category"], prefix="/categories")
 
@@ -10,7 +10,7 @@ router = APIRouter(tags=["Category"], prefix="/categories")
 @router.post("")
 async def create_category(
     category: models.CreatedCategory,
-    # current_user: Annotated[models.User, Depends(deps.get_current_user)],
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> models.Category:
     
@@ -32,7 +32,7 @@ async def create_category(
 # Get All Categories
 @router.get("")
 async def read_all_categories(
-    # current_user: Annotated[models.User, Depends(deps.get_current_user)],
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> models.CategoryList:
     
@@ -47,7 +47,7 @@ async def read_all_categories(
 @router.get("/{category_id}")
 async def read_category(
     category_id: int,
-    # current_user: Annotated[models.User, Depends(deps.get_current_user)],
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> models.Category:
     
@@ -63,7 +63,7 @@ async def read_category(
 async def update_category(
     category_id: int,
     category: models.UpdatedCategory,
-    # current_user: Annotated[models.User, Depends(deps.get_current_user)],
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> models.Category:
     
@@ -84,7 +84,7 @@ async def update_category(
 @router.delete("/{category_id}")
 async def delete_category(
     category_id: int,
-    # current_user: Annotated[models.User, Depends(deps.get_current_user)],
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> dict:
     
