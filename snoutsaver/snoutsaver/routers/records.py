@@ -11,7 +11,7 @@ router = APIRouter(tags=["Record"], prefix="/records")
 
 
 # Create
-@router.post("/records")
+@router.post("")
 async def create_record(
     record: models.BaseRecord,
     current_user: Annotated[models.users, Depends(deps.get_current_user)],
@@ -33,12 +33,15 @@ async def create_record(
     return models.Records.model_validate(db_record)
 
 # Read 
-@router.get("/records")
+@router.get("")
 async def read_all_records(
+    current_user: Annotated[models.users, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> models.RecordList:
     
-    result = await session.exec(select(models.DBRecord))
+    result = await session.exec(
+        select(models.DBRecord).where(models.DBRecord.creator_id == current_user.id)
+    )
     records = result.all()
 
     return models.RecordList.model_validate(
