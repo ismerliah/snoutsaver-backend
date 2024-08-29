@@ -39,6 +39,9 @@ async def read_all_categories(
     result = await session.exec(select(models.DBCategory))
     categories = result.all()
 
+    if not categories:
+        raise HTTPException(status_code=404, detail="Category not found")
+
     return models.CategoryList.model_validate(
         dict(items=categories, page_size=0, page=0, size_per_page=0)
     )
