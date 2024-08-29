@@ -2,5 +2,6 @@
     "conventionalCommits.scopes": [
         "README",
         ".gitignore"
-    ]
+    ],
+    "python.analysis.autoImportCompletions": true
 }
