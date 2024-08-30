@@ -13,19 +13,32 @@ router = APIRouter(tags=["Record"], prefix="/records")
 # Create
 @router.post("")
 async def create_record(
-    record: models.BaseRecord,
-    current_user: Annotated[models.users, Depends(deps.get_current_user)],
+    record: models.CreateRecord,
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)],
     ) -> models.Records | None:
-    data = await session.get(current_user.id)
-    if not data:
-        raise HTTPException(status_code=404, detail=" data not found ;( ")
+    # data = await session.get(models.DBRecord, record.id)
+    # if not data:
+    #     raise HTTPException(status_code=404, detail=" data not found ;( ")
     
-    data = await session.execute(
-        select(models.DBRecord).where(models.DBRecord.id == record.id)
-    )
-    
+    # data = await session.exec(
+    #     select(models.DBRecord).where(models.DBRecord.id == record.id)
+    # )
+
     db_record = models.DBRecord.model_validate(record)
+
+    category = await session.exec(
+        select(models.DBCategory).where(models.DBCategory.id == record.category_id) 
+    )
+    category = category.one_or_none()
+
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    db_record.user = current_user
+    db_record.category = category
+    db_record.category_name = category.name
+
     session.add(db_record)
     await session.commit()
     await session.refresh(db_record)
@@ -35,7 +48,7 @@ async def create_record(
 # Read 
 @router.get("")
 async def read_all_records(
-    current_user: Annotated[models.users, Depends(deps.get_current_user)],
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> models.RecordList:
     
@@ -44,8 +57,12 @@ async def read_all_records(
     )
     records = result.all()
 
+    if not records:
+        raise HTTPException(status_code=404, detail="Record not found")
+    
+
     return models.RecordList.model_validate(
-        dict(items=records)
+        dict(records=records)
     )
 
 # Read record by ID
@@ -57,7 +74,7 @@ async def read_record(
     
     db_record = await session.get(models.DBRecord, record_id)
     if not db_record:
-        raise HTTPException(status_code=404, detail="record not found")
+        raise HTTPException(status_code=404, detail="Record not found")
 
     return models.Records.model_validate
 
@@ -73,7 +90,7 @@ async def update_record(
     db_record = await session.get(models.DBRecord, record_id)
 
     if not db_record:
-        raise HTTPException(status_code=404, detail="record not found")
+        raise HTTPException(status_code=404, detail="Record not found")
     
     db_record.sqlmodel_update(data)
     session.add(db_record)
@@ -92,7 +109,7 @@ async def delete_record(
     db_record = await session.get(models.DBRecord, record_id)
 
     if not db_record:
-        raise HTTPException(status_code=404, detail="record not found")
+        raise HTTPException(status_code=404, detail="Record not found")
     
     await session.delete(db_record)
     await session.commit()
