@@ -17,14 +17,6 @@ async def create_record(
     current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)],
     ) -> models.Records | None:
-    # data = await session.get(models.DBRecord, record.id)
-    # if not data:
-    #     raise HTTPException(status_code=404, detail=" data not found ;( ")
-    
-    # data = await session.exec(
-    #     select(models.DBRecord).where(models.DBRecord.id == record.id)
-    # )
-
     db_record = models.DBRecord.model_validate(record)
 
     category = await session.exec(
@@ -69,30 +61,52 @@ async def read_all_records(
 @router.get("/{record_id}")
 async def read_record(
     record_id: int,
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
     ) -> models.Records:
     
     db_record = await session.get(models.DBRecord, record_id)
     if not db_record:
         raise HTTPException(status_code=404, detail="Record not found")
+    
+    if db_record.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="User not authorized")
 
-    return models.Records.model_validate
+    return models.Records.model_validate(db_record)
 
 # Update
 @router.put("/{record_id}")
 async def update_record(
-    record_id: int, 
+    record_id: int,
     record: models.UpdatedRecord,
+    current_user: Annotated[models.User, Depends(deps.get_current_user)], 
     session: Annotated[AsyncSession, Depends(models.get_session)]
     ) -> models.Records:
     
-    data = record.model_dump()
+    # data = record.model_dump()
     db_record = await session.get(models.DBRecord, record_id)
 
     if not db_record:
         raise HTTPException(status_code=404, detail="Record not found")
     
-    db_record.sqlmodel_update(data)
+    if db_record.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="User not authorized")
+    
+    category = await session.exec(
+        select(models.DBCategory).where(models.DBCategory.id == record.category_id) 
+    )
+    category = category.one_or_none()
+
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    db_record.user = current_user
+    db_record.category = category
+    db_record.amount = record.amount
+    db_record.currency = record.currency
+    db_record.category_name = category.name
+
+    # db_record.sqlmodel_update(data)
     session.add(db_record)
     await session.commit()
     await session.refresh(db_record)
@@ -103,6 +117,7 @@ async def update_record(
 @router.delete("/{record_id}")
 async def delete_record(
     record_id: int,
+    current_user: Annotated[models.User, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)]
     ) -> dict:
 
@@ -110,6 +125,9 @@ async def delete_record(
 
     if not db_record:
         raise HTTPException(status_code=404, detail="Record not found")
+    
+    if db_record.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="User not authorized")
     
     await session.delete(db_record)
     await session.commit()
