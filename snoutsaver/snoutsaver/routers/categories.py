@@ -76,6 +76,20 @@ async def update_category(
     if not db_category:
         raise HTTPException(status_code=404, detail="Category not found")
     
+    # Check if new name already exists
+    if category.name:
+        existing_category = await session.execute(
+            select(models.DBCategory).where(
+                models.DBCategory.name == category.name,
+                models.DBCategory.type == db_category.type,
+                models.DBCategory.id != category_id
+            )
+        )
+        existing_category = existing_category.scalars().first()
+        
+        if existing_category:
+            raise HTTPException(status_code=400, detail="Category name already exists")
+        
     db_category.sqlmodel_update(data)
     session.add(db_category)
     await session.commit()
