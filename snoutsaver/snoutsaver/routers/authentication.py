@@ -25,6 +25,7 @@ settings = config.get_settings()
 )
 async def authentication(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    # from_google: Annotated[HTTPAuthorizationCredentials, Depends()],
     session: Annotated[models.AsyncSession, Depends(models.get_session)],
 ) -> models.Token:
 
@@ -36,7 +37,7 @@ async def authentication(
 
     if not user:
         result = await session.exec(
-            select(models.DBUser).where(models.DBUser.email == form_data.username)
+            select(models.DBUser).where(models.DBUser.email == form_data.username, models.DBUser.email == from_google.email)
         )
         user = result.one_or_none()
 

@@ -49,7 +49,7 @@ class DBUser(BaseUser, SQLModel, table=True):
 
     first_name: str | None = Field(default=None)
     last_name: str | None = Field(default=None)
-    password: str
+    password: str | None = Field(default=None)
 
     register_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)

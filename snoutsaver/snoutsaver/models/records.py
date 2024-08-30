@@ -1,6 +1,5 @@
 import datetime
 import pydantic
-import pytz
 
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
