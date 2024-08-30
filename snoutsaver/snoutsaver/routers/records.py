@@ -40,7 +40,7 @@ async def read_all_records(
 ) -> models.RecordList:
     
     result = await session.exec(
-        select(models.DBRecord).where(models.DBRecord.creator_id == current_user.id)
+        select(models.DBRecord).where(models.DBRecord.user_id == current_user.id)
     )
     records = result.all()
 
