@@ -14,10 +14,10 @@ async def create_category(
     session: Annotated[AsyncSession, Depends(models.get_session)]
 ) -> models.Category:
     
-    data = await session.execute(
+    data = await session.exec(
         select(models.DBCategory).where(models.DBCategory.name == category.name)
     )
-    existing_category = data.scalars().first()
+    existing_category = data.first()
 
     if existing_category:
         raise HTTPException( status_code=400, detail="Category already exists")
@@ -78,14 +78,14 @@ async def update_category(
     
     # Check if new name already exists
     if category.name:
-        existing_category = await session.execute(
+        existing_category = await session.exec(
             select(models.DBCategory).where(
                 models.DBCategory.name == category.name,
                 models.DBCategory.type == db_category.type,
                 models.DBCategory.id != category_id
             )
         )
-        existing_category = existing_category.scalars().first()
+        existing_category = existing_category.first()
         
         if existing_category:
             raise HTTPException(status_code=400, detail="Category name already exists")
