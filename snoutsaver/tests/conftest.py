@@ -165,5 +165,36 @@ async def example_category2(session: models.AsyncSession) -> models.DBCategory:
 # ----------------------------------------------------------------------
 
 # [Record]------------------------------------------------------------
+@pytest_asyncio.fixture(name="record")
+async def example_record1(session: models.AsyncSession) -> models.DBRecord:
+    user_id = 1
+    description = "first record"
+    amount = 100
+    currency = "THB"
+    type = "Expense"
+    category_id = 1
+    category_name = "Food"
+
+    query = await session.exec(
+        models.select(models.DBRecord).where(models.DBRecord.user_id == user_id).limit(1)
+    )
+    record = query.one_or_none()
+    if record:
+        return record
+    
+    record = models.DBRecord(
+        user_id=user_id,
+        description=description,
+        amount=amount,
+        currency=currency,
+        category_id=category_id,
+        category_name=category_name,
+        type=type,
+    )
+
+    session.add(record)
+    await session.commit()
+    await session.refresh(record)
+    return record
 
 # ----------------------------------------------------------------------
