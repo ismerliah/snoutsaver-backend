@@ -117,6 +117,51 @@ async def oauth_token_user1(user1: models.DBUser) -> dict:
 
 # [Category]------------------------------------------------------------
 
+@pytest_asyncio.fixture(name="category1")
+async def example_category1(session: models.AsyncSession) -> models.DBCategory:
+    name = "Food"
+    type = "Expense"
+
+    query = await session.exec(
+        models.select(models.DBCategory).where(models.DBCategory.name == name).limit(1)
+    )
+    category = query.one_or_none()
+    if category:
+        return category
+    
+    category = models.DBCategory(
+        name=name,
+        type=type,
+    )
+
+    session.add(category)
+    await session.commit()
+    await session.refresh(category)
+    return category
+
+
+@pytest_asyncio.fixture(name="category2")
+async def example_category2(session: models.AsyncSession) -> models.DBCategory:
+    name = "Travel"
+    type = "Expense"
+
+    query = await session.exec(
+        models.select(models.DBCategory).where(models.DBCategory.name == name).limit(1)
+    )
+    category = query.one_or_none()
+    if category:
+        return category
+    
+    category = models.DBCategory(
+        name=name,
+        type=type,
+    )
+
+    session.add(category)
+    await session.commit()
+    await session.refresh(category)
+    return category
+
 # ----------------------------------------------------------------------
 
 # [Record]------------------------------------------------------------
