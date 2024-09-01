@@ -4,7 +4,7 @@
 
 ERD model
 
-[![ERD](https://app.eraser.io/workspace/BxyGs4LuOQLXh37ka7Mw/preview?elements=0VqnbaGuHeZw8oStL8hVxg&type=embed)](https://app.eraser.io/workspace/BxyGs4LuOQLXh37ka7Mw?elements=0VqnbaGuHeZw8oStL8hVxg)
+![ERD](https://app.eraser.io/workspace/BxyGs4LuOQLXh37ka7Mw/preview?elements=0VqnbaGuHeZw8oStL8hVxg&type=embed)
 
 ---
 
