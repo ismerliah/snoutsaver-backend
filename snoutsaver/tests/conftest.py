@@ -78,6 +78,7 @@ async def example_user1(session: models.AsyncSession) -> models.DBUser:
     user = models.DBUser(
         username=username,
         password=password,
+        confirm_password=password,
         email="test1@test.com",
         first_name="Firstname",
         last_name="lastname",
