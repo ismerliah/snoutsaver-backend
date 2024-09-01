@@ -65,7 +65,7 @@ async def get_session() -> models.AsyncIterator[models.AsyncSession]:
 # user1
 @pytest_asyncio.fixture(name="user1")
 async def example_user1(session: models.AsyncSession) -> models.DBUser:
-    password = "123456"
+    password = "12345678"
     username = "user1"
 
     query = await session.exec(
