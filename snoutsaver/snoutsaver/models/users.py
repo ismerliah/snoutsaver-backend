@@ -8,8 +8,8 @@ from sqlmodel import Field, SQLModel
 
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
-    email: str = pydantic.Field(json_schema_extra=dict(example="user@email.local"))
-    username: str = pydantic.Field(json_schema_extra=dict(example="user"))
+    email: str = pydantic.Field(json_schema_extra={"example":"user@email.local", "unique": True})
+    username: str = pydantic.Field(json_schema_extra={"example":"user", "unique": True})
 
 class User(BaseUser):
     id: int
@@ -21,7 +21,7 @@ class User(BaseUser):
     )
 
 class RegisterUser(BaseUser):
-    password: str = pydantic.Field(json_schema_extra=dict(example="password"))
+    password: str = pydantic.Field(json_schema_extra=dict(example="password", minLength=8))
     confirm_password: str = pydantic.Field(json_schema_extra=dict(example="confirm_password"))
 
 class ChangePassword(BaseModel):
@@ -29,8 +29,8 @@ class ChangePassword(BaseModel):
     new_password: str
 
 class UpdateUser(BaseModel):
-    email: str = pydantic.Field(json_schema_extra=dict(example="user@email.local"))
-    username: str = pydantic.Field(json_schema_extra=dict(example="user"))
+    email: str = pydantic.Field(json_schema_extra={"example":"user@email.local", "unique": True})
+    username: str = pydantic.Field(json_schema_extra={"example":"user", "unique": True})
     first_name: str = pydantic.Field(json_schema_extra=dict(example="Firstname"))
     last_name: str = pydantic.Field(json_schema_extra=dict(example="Lastname"))
 

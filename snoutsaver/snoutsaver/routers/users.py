@@ -31,6 +31,13 @@ async def create_user(
             detail="Username already exists"
         )
     
+    # Check password length
+    if len(user_info.password) < 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 8 characters"
+        )
+    
     # Check if password and confirm password match
     if user_info.password != user_info.confirm_password:
         raise HTTPException(
