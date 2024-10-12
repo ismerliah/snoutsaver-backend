@@ -24,11 +24,23 @@ async def create_user(
     )
     user = user.one_or_none()
 
+    email = await session.exec(
+        select(models.DBUser).where(models.DBUser.email == user_info.email)
+    )
+    email = email.one_or_none()
+
     # Check if user already exists
     if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already exists"
+        )
+    
+    # Check if email already exists
+    if email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already exists"
         )
     
     # Check password length
@@ -55,12 +67,32 @@ async def create_user(
 
 # Get current user
 @router.get("/me")
-def get_user_me(
-    current_user: models.User = Depends(deps.get_current_user)
-) -> models.User:
+async def get_user_me(
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.GetUser = Depends(deps.get_current_user),
+) -> models.GetUser:
     print("current_user", current_user)
 
-    return current_user
+    user = await session.exec(
+        select(models.DBUser).where(models.DBUser.username == current_user.username)
+    )
+    result = user.one_or_none()
+
+    return models.GetUser.model_validate(result)
+
+# Get All users
+@router.get("/")
+async def get_all_users(
+    session: Annotated[AsyncSession, Depends(models.get_session)]
+) -> models.UserList:
+    print("get_all_users")
+
+    result = await session.exec(select(models.DBUser))
+    users = result.all()
+
+    return models.UserList.model_validate(
+        dict(items=users, page_size=0, page=0, size_per_page=0)
+    )
 
 
 # Change password
@@ -117,7 +149,7 @@ async def update_user(
     user_update: models.UpdateUser,
     session: Annotated[AsyncSession, Depends(models.get_session)],
     current_user: models.User = Depends(deps.get_current_user)
-) -> models.User:
+) -> models.UpdateUser:
     print("update_user", user_update)
 
     db_user = await session.get(models.DBUser, user_id)
@@ -135,6 +167,33 @@ async def update_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User not authorized"
         )
+    
+    # Check if email already exists
+    if user_update.email:
+        email = await session.exec(
+            select(models.DBUser).where(models.DBUser.email == user_update.email)
+        )
+        email = email.one_or_none()
+        
+        if email and email.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already exists"
+            )
+        
+    # Check if username already exists
+    if user_update.username:
+        username = await session.exec(
+            select(models.DBUser).where(models.DBUser.username == user_update.username)
+        )
+        username = username.one_or_none()
+        
+        if username and username.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already exists"
+            )
+    
     
     db_user.sqlmodel_update(user_update)
     session.add(db_user)

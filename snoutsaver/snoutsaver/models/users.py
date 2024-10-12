@@ -23,16 +23,25 @@ class User(BaseUser):
 class RegisterUser(BaseUser):
     password: str = pydantic.Field(json_schema_extra=dict(example="password", minLength=8))
     confirm_password: str = pydantic.Field(json_schema_extra=dict(example="confirm_password"))
+    provider: str = pydantic.Field(json_schema_extra=dict(example="default"))
 
 class ChangePassword(BaseModel):
     current_password: str
     new_password: str
+
+class GetUser(BaseUser):
+    id: int
+    first_name: str | None = Field(default=None)
+    last_name: str | None = Field(default=None)
+    profile_picture: str | None = Field(default=None)
+    provider: str | None = Field(default=None)
 
 class UpdateUser(BaseModel):
     email: str = pydantic.Field(json_schema_extra={"example":"user@email.local", "unique": True})
     username: str = pydantic.Field(json_schema_extra={"example":"user", "unique": True})
     first_name: str = pydantic.Field(json_schema_extra=dict(example="Firstname"))
     last_name: str = pydantic.Field(json_schema_extra=dict(example="Lastname"))
+    profile_picture: str | None = pydantic.Field(json_schema_extra=dict(example="https://example.com/image.png"))
 
 class Token(BaseModel):
     access_token: str
@@ -50,6 +59,8 @@ class DBUser(BaseUser, SQLModel, table=True):
     first_name: str | None = Field(default=None)
     last_name: str | None = Field(default=None)
     password: str | None = Field(default=None)
+    profile_picture: str | None = Field(default=None)
+    provider: str | None = Field(default=None)
 
     register_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
@@ -67,4 +78,11 @@ class DBUser(BaseUser, SQLModel, table=True):
         return bcrypt.checkpw(
             plain_password.encode("utf-8"), self.password.encode("utf-8")
         )
+    
+class UserList(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    items: list[GetUser]
+    page: int
+    page_size: int
+    size_per_page: int
 
