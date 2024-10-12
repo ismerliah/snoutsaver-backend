@@ -13,7 +13,7 @@ from . import records
 from .users import *
 from .categories import *
 from .records import *
-
+from .setups import *
 
 connect_args = {}
 
