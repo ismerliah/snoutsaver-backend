@@ -34,7 +34,7 @@ async def get_current_user(
         if user_id is None:
             raise credentials_exception
 
-    except jwt.JWTError as e:
+    except jwt.PyJWTError as e:
         print(e)
         raise credentials_exception
 

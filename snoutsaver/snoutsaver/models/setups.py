@@ -8,7 +8,6 @@ from . import records
 class BaseSetup(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    user_id: int
     monthly_income: float
     saving_goal: float
     year: int
