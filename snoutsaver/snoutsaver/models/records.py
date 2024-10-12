@@ -58,6 +58,9 @@ class DBRecord(BaseRecord, SQLModel, table=True):
 
     record_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
+    is_monthly: bool = Field(default=False)
+    setup_id: int = Field(default=None, foreign_key="setups.id")
+
 class RecordList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     records: list[Records]

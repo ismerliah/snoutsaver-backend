@@ -8,6 +8,7 @@ class BaseCategory(BaseModel):
 
     name: str
     type: str  # Expense or Income
+    icon: str  # Store the icon name as a string
 
 
 class CreatedCategory(BaseCategory):
@@ -17,6 +18,7 @@ class CreatedCategory(BaseCategory):
 class UpdatedCategory(BaseCategory):
     name: Optional[str] = None
     type: Optional[str] = None
+    icon: Optional[str] = None
 
 
 class Category(BaseCategory):
@@ -28,7 +30,7 @@ class DBCategory(Category, SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
     type: str
-
+    icon: str
 
 class CategoryList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
