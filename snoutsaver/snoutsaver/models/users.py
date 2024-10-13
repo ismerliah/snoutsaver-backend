@@ -25,6 +25,7 @@ class RegisterUser(BaseUser):
     confirm_password: str = pydantic.Field(json_schema_extra=dict(example="confirm_password"))
     provider: str = pydantic.Field(json_schema_extra=dict(example="default"))
     profile_picture: str | None = Field(default=None)
+
 class ChangePassword(BaseModel):
     current_password: str
     new_password: str
@@ -41,7 +42,10 @@ class UpdateUser(BaseModel):
     username: str = pydantic.Field(json_schema_extra={"example":"user", "unique": True})
     first_name: str = pydantic.Field(json_schema_extra=dict(example="Firstname"))
     last_name: str = pydantic.Field(json_schema_extra=dict(example="Lastname"))
-    profile_picture: str | None = pydantic.Field(json_schema_extra=dict(example="https://example.com/image.png"))
+    profile_picture: str = pydantic.Field(json_schema_extra=dict(example="www.example.com/profile_picture.png"))
+
+class UpdateProfilePicture(BaseModel):
+    profile_picture: str = pydantic.Field(json_schema_extra=dict(example="www.example.com/profile_picture.png"))
 
 class Token(BaseModel):
     access_token: str

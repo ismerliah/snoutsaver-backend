@@ -194,13 +194,44 @@ async def update_user(
                 detail="Username already exists"
             )
     
-    
     db_user.sqlmodel_update(user_update)
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)
     return db_user
 
+# Update Profile Picture
+@router.put("/{user_id}/update_profile_picture")
+async def update_profile_picture(
+    user_id: int,
+    profile_picture_update: models.UpdateProfilePicture,
+    session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: models.User = Depends(deps.get_current_user)
+) -> models.UpdateProfilePicture:
+    print("update_profile_picture", profile_picture_update)
+
+    db_user = await session.get(models.DBUser, user_id)
+
+    # Check if user exists
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Check if user is authorized
+    if db_user.id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User not authorized"
+        )
+    
+    db_user.sqlmodel_update(profile_picture_update)
+    session.add(db_user)
+    await session.commit()
+    await session.refresh(db_user)
+    return db_user
+    
 
 # Delete user
 @router.delete("/{user_id}/delete")
