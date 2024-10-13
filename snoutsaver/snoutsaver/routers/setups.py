@@ -63,7 +63,7 @@ async def create_setups(
     if setup.monthly_expenses:
         for expense_record in setup.monthly_expenses:
             category = await session.exec(
-                select(models.DBCategory).where(models.DBCategory.id == expense_record["category_id"])
+                select(models.DBCategory).where(models.DBCategory.id == int(expense_record["category_id"]))
             )
             category = category.one_or_none()
 
@@ -93,7 +93,10 @@ async def create_setups(
     )
     db_setup = setup_result.one_or_none()
 
-    monthly_expenses = [expense.dict() for expense in db_setup.monthly_expenses]
+    monthly_expenses = [
+        expense.dict() for expense in db_setup.monthly_expenses
+        if expense.type == "Expense"
+    ]
 
     setup_data = models.Setups.model_validate({
         **db_setup.dict(),
@@ -119,7 +122,10 @@ async def read_setups(
     if not db_setup:
         raise HTTPException(status_code=404, detail="Setup not found")
 
-    monthly_expenses = [expense.dict() for expense in db_setup.monthly_expenses]
+    monthly_expenses = [
+        expense.dict() for expense in db_setup.monthly_expenses
+        if expense.type == "Expense"
+    ]
 
     setup_data = models.Setups.model_validate({
         **db_setup.dict(),
@@ -155,7 +161,14 @@ async def update_setups(
     if setup.year is not None:
         db_setup.year = setup.year
 
-    # Update monthly income record
+    category = await session.exec(
+        select(models.DBCategory).where(models.DBCategory.name == "Salary")
+    )
+    category = category.one_or_none()
+
+    if not category:
+        raise HTTPException(status_code=404, detail="Category 'Salary' not found")
+
     income_record = await session.exec(
         select(models.DBRecord)
         .where(models.DBRecord.setup_id == db_setup.id, models.DBRecord.type == "Income", models.DBRecord.is_monthly == True)
@@ -166,14 +179,6 @@ async def update_setups(
         income_record.amount = setup.monthly_income
         income_record.description = "Monthly Income"
     else:
-        category = await session.exec(
-            select(models.DBCategory).where(models.DBCategory.name == "Salary")
-        )
-        category = category.one_or_none()
-
-        if not category:
-            raise HTTPException(status_code=404, detail="Category 'Salary' not found")
-
         db_income = models.DBRecord(
             user_id=current_user.id,
             amount=setup.monthly_income,
@@ -232,14 +237,10 @@ async def update_setups(
 
     await session.commit()
 
-    setup_result = await session.exec(
-        select(models.DBSetup)
-        .options(selectinload(models.DBSetup.monthly_expenses))
-        .where(models.DBSetup.id == db_setup.id)
-    )
-    db_setup = setup_result.one_or_none()
-
-    monthly_expenses = [expense.dict() for expense in db_setup.monthly_expenses]
+    monthly_expenses = [
+        expense.dict() for expense in db_setup.monthly_expenses
+        if expense.type == "Expense"
+    ]
 
     setup_data = models.Setups.model_validate({
         **db_setup.dict(),
@@ -255,18 +256,16 @@ async def delete_setup(
     current_user: Annotated[models.DBUser, Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)],
 ):
-    # Fetch the setup to delete
-    setup_to_delete = await session.exec(
+    setup_result = await session.exec(
         select(models.DBSetup)
         .where(models.DBSetup.id == setup_id, models.DBSetup.user_id == current_user.id)
     )
-    setup_to_delete = setup_to_delete.one_or_none()
+    setup_result = setup_result.one_or_none()
 
-    if not setup_to_delete:
+    if not setup_result:
         raise HTTPException(status_code=404, detail="Setup not found")
 
-    # Delete the setup
-    await session.delete(setup_to_delete)
+    await session.delete(setup_result)
     await session.commit()
 
     return {"detail": "Setup deleted successfully"}
