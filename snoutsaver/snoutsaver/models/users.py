@@ -24,8 +24,7 @@ class RegisterUser(BaseUser):
     password: str = pydantic.Field(json_schema_extra=dict(example="password", minLength=8))
     confirm_password: str = pydantic.Field(json_schema_extra=dict(example="confirm_password"))
     provider: str = pydantic.Field(json_schema_extra=dict(example="default"))
-    profile_picture: str | None = pydantic.Field(json_schema_extra=dict(example="https://example.com/image.png"))
-
+    profile_picture: str | None = Field(default=None)
 class ChangePassword(BaseModel):
     current_password: str
     new_password: str
