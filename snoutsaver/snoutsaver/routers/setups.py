@@ -194,7 +194,7 @@ async def update_setups(
         session.add(db_income)
 
     # Update monthly expenses records
-    existing_expenses_by_id = {expense.id: expense for expense in db_setup.monthly_expenses}
+    existing_expenses_by_id = {expense.id: expense for expense in db_setup.monthly_expenses if expense.type == "Expense"}
     
     updated_expense_ids = set()
 
@@ -208,7 +208,7 @@ async def update_setups(
         else:
             # Add new expense record
             category = await session.exec(
-                select(models.DBCategory).where(models.DBCategory.id == expense_record["category_id"])
+                select(models.DBCategory).where(models.DBCategory.id == int(expense_record["category_id"]))
             )
             category = category.one_or_none()
 
