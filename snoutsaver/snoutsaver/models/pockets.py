@@ -5,6 +5,7 @@ from sqlmodel import Field, SQLModel, Relationship
 from . import users
 from . import records
 from . import categories
+from . import records
 
 class BasePocket(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -19,6 +20,10 @@ class AllPocket(BasePocket):
     id: int
     user_id: int
     monthly_expenses: Optional[List[dict]] = None
+
+class UpdatedPocket(BasePocket):
+    name: Optional[str] = None
+    balance: Optional[int] = None
 
 class PocketTransfer(BaseModel):
     from_pocket_id: int = Field(default=None, foreign_key="pockets.id")
@@ -35,8 +40,11 @@ class DBPocket(SQLModel, table=True):
     name: str
     balance: float
 
-    category: List[categories.DBCategory] = Relationship()
-    monthly_expenses: List[records.DBRecord] = Relationship()
+    # records: records.DBRecord = Relationship()
+    # record_id: int | None = Field(default=None, foreign_key="records.id")
+
+    # monthly_expenses: records.DBRecord = Relationship()
+    # record_id: int | None = Field(default=None, foreign_key="records.id")
 
 
 class PocketList(BaseModel):

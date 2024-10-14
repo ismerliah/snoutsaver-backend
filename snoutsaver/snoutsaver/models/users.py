@@ -6,6 +6,8 @@ from pydantic import BaseModel, ConfigDict
 
 from sqlmodel import Field, SQLModel
 
+from typing import Optional
+
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
     email: str = pydantic.Field(json_schema_extra={"example":"user@email.local", "unique": True})
@@ -25,7 +27,6 @@ class RegisterUser(BaseUser):
     confirm_password: str = pydantic.Field(json_schema_extra=dict(example="confirm_password"))
     provider: str = pydantic.Field(json_schema_extra=dict(example="default"))
     profile_picture: str | None = Field(default=None)
-
 class ChangePassword(BaseModel):
     current_password: str
     new_password: str

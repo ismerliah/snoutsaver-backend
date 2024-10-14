@@ -46,6 +46,7 @@ async def create_setups(
             raise HTTPException(status_code=404, detail="Category not found")
 
         db_income = models.DBRecord(
+            pocket_id=1,
             user_id=current_user.id,
             amount=setup.monthly_income,
             currency="THB",
@@ -71,6 +72,7 @@ async def create_setups(
                 raise HTTPException(status_code=404, detail="Category not found")
 
             db_expense = models.DBRecord(
+                pocket_id=1,
                 user_id=current_user.id,
                 amount=expense_record["amount"],
                 currency="THB",

@@ -8,6 +8,7 @@ from sqlmodel import Field, SQLModel, Relationship
 
 from . import users
 from . import categories
+from . import pockets
 
 
 class BaseRecord(BaseModel):
@@ -21,6 +22,8 @@ class BaseRecord(BaseModel):
 
     category_id: int
     category_name: str
+
+    pocket_id: Optional[int] = None
 
 class Records(BaseRecord):
     id: int
@@ -57,6 +60,9 @@ class DBRecord(BaseRecord, SQLModel, table=True):
     currency: str
     type: str
     description: str | None = Field(default=None)
+
+    pocket_id: int | None = Field(default=None, foreign_key="pockets.id")
+    pocket: pockets.DBPocket = Relationship()
 
     category: categories.DBCategory = Relationship()
     category_id: int = Field(default=None, foreign_key="categories.id")
