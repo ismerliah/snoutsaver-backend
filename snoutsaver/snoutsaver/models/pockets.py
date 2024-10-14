@@ -39,11 +39,14 @@ class DBPocket(SQLModel, table=True):
     name: str
     balance: float
 
+    category: List[categories.DBCategory] = Relationship()
+    monthly_expenses: List[records.DBRecord] = Relationship()
+    
      # Relationship with categories (multiple categories can be associated with a pocket)
-    category: List[categories.DBCategory] = Relationship(back_populates="pockets")
+    #category: List[categories.DBCategory] = Relationship(back_populates="pockets")
 
     # Relationship with records (monthly expenses)
-    monthly_expenses: List[records.DBRecord] = Relationship(back_populates="pocket")
+    #monthly_expenses: List[records.DBRecord] = Relationship(back_populates="pocket")
 
 
 class PocketList(BaseModel):
