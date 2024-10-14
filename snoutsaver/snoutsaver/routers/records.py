@@ -30,6 +30,7 @@ async def create_record(
     db_record.user = current_user
     db_record.category = category
     db_record.category_name = category.name
+    db_record.record_date = record.record_date
 
     session.add(db_record)
     await session.commit()
@@ -105,6 +106,7 @@ async def update_record(
     db_record.amount = record.amount
     db_record.currency = record.currency
     db_record.category_name = category.name
+    db_record.record_date = record.record_date
 
     # db_record.sqlmodel_update(data)
     session.add(db_record)

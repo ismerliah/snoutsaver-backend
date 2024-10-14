@@ -30,7 +30,9 @@ class Records(BaseRecord):
     )
 
 class CreateRecord(BaseRecord):
-    pass
+    record_date: Optional[datetime.datetime] = pydantic.Field(
+        json_schema_extra=dict(example="2023-01-01T00:00:00.000000")
+    )
 
 class UpdatedRecord(BaseRecord):
     type: Optional[str] = None
@@ -39,6 +41,10 @@ class UpdatedRecord(BaseRecord):
 
     category_id: Optional[int] = None
     # category_name: Optional[str] = None
+    
+    record_date: Optional[datetime.datetime] = pydantic.Field(
+        json_schema_extra=dict(example="2023-01-01T00:00:00.000000")
+    )
 
 class DBRecord(BaseRecord, SQLModel, table=True):
     __tablename__ = "records"
@@ -59,7 +65,7 @@ class DBRecord(BaseRecord, SQLModel, table=True):
     record_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
     is_monthly: bool = Field(default=False)
-    setup_id: int = Field(default=None, foreign_key="setups.id")
+    setup_id: int | None = Field(default=None, foreign_key="setups.id")
 
 class RecordList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
