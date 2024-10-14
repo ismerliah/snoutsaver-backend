@@ -14,6 +14,7 @@ from .users import *
 from .categories import *
 from .records import *
 from .setups import *
+from .pockets import *
 
 connect_args = {}
 
