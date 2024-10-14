@@ -32,6 +32,8 @@ class DBCategory(Category, SQLModel, table=True):
     type: str
     icon: str
 
+    #pockets: List["DBPocket"] = Relationship(back_populates="category")
+
 class CategoryList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     items: list[Category]

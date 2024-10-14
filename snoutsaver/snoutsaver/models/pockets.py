@@ -16,6 +16,10 @@ class BasePocket(BaseModel):
 class PocketCreate(BasePocket):
     monthly_expenses: Optional[List[dict]] = None
 
+class UpdatedPocket(BasePocket):
+    name: Optional[str] = None
+    balance: Optional[int] = None
+    
 class AllPocket(BasePocket):
     id: int
     user_id: int
@@ -40,11 +44,14 @@ class DBPocket(SQLModel, table=True):
     name: str
     balance: float
 
-    # records: records.DBRecord = Relationship()
-    # record_id: int | None = Field(default=None, foreign_key="records.id")
+    category: List[categories.DBCategory] = Relationship()
+    monthly_expenses: List[records.DBRecord] = Relationship()
+    
+     # Relationship with categories (multiple categories can be associated with a pocket)
+    #category: List[categories.DBCategory] = Relationship(back_populates="pockets")
 
-    # monthly_expenses: records.DBRecord = Relationship()
-    # record_id: int | None = Field(default=None, foreign_key="records.id")
+    # Relationship with records (monthly expenses)
+    #monthly_expenses: List[records.DBRecord] = Relationship(back_populates="pocket")
 
 
 class PocketList(BaseModel):

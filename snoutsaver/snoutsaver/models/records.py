@@ -6,6 +6,8 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel, Relationship
 
+from snoutsaver.snoutsaver.models.pockets import DBPocket
+
 from . import users
 from . import categories
 from . import pockets
@@ -72,6 +74,9 @@ class DBRecord(BaseRecord, SQLModel, table=True):
 
     is_monthly: bool = Field(default=False)
     setup_id: int | None = Field(default=None, foreign_key="setups.id")
+
+    #pocket_id: int = Field(default=None, foreign_key="pockets.id")
+    #pocket: Optional["DBPocket"] = Relationship(back_populates="monthly_expenses")
 
 class RecordList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
