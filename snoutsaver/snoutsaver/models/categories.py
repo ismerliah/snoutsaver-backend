@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from snoutsaver.snoutsaver.models.pockets import DBPocket
 
 
 class BaseCategory(BaseModel):
@@ -31,6 +33,8 @@ class DBCategory(Category, SQLModel, table=True):
     name: str
     type: str
     icon: str
+
+    pockets: List["DBPocket"] = Relationship(back_populates="category")
 
 class CategoryList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
