@@ -15,6 +15,10 @@ class BasePocket(BaseModel):
 class PocketCreate(BasePocket):
     monthly_expenses: Optional[List[dict]] = None
 
+class UpdatedPocket(BasePocket):
+    name: Optional[str] = None
+    balance: Optional[int] = None
+    
 class AllPocket(BasePocket):
     id: int
     user_id: int
