@@ -6,7 +6,7 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel, Relationship
 
-from snoutsaver.snoutsaver.models.pockets import DBPocket
+# from snoutsaver.snoutsaver.models.pockets import DBPocket
 
 from . import users
 from . import categories
