@@ -18,7 +18,8 @@ async def test_create_record_with_auth(
         "currency": "THB",
         "type": "Expense",
         "category_id": category1.id,
-        "category_name": category1.name
+        "category_name": category1.name,
+        "record_date": "2022-01-01"
     }
     response = await client.post("/records", json=record_data, headers=headers)
     assert response.status_code == 200
@@ -90,7 +91,8 @@ async def test_read_record_with_auth(
         "currency": "THB",
         "type": "Expense",
         "category_id": category1.id,
-        "category_name": category1.name
+        "category_name": category1.name,
+        "record_date": "2022-01-01"
     }
     response = await client.post("/records", json=record_data, headers=headers)
     record_id = response.json()["id"]
@@ -122,7 +124,8 @@ async def test_update_record_with_auth(
         "currency": "THB",
         "type": "Expense",
         "category_id": category1.id,
-        "category_name": category1.name
+        "category_name": category1.name,
+        "record_date": "2022-01-01"
     }
     response = await client.post("/records", json=record_data, headers=headers)
     record_id = response.json()["id"]
@@ -133,7 +136,8 @@ async def test_update_record_with_auth(
         "currency": "USD",
         "type": "Expense",
         "category_id": category1.id,
-        "category_name": category1.name
+        "category_name": category1.name,
+        "record_date": "2022-01-01"
     }
     response = await client.put(f"/records/{record_id}", json=update_data, headers=headers)
     assert response.status_code == 200
@@ -170,7 +174,8 @@ async def test_delete_record_with_auth(
         "currency": "THB",
         "type": "Expense",
         "category_id": category1.id,
-        "category_name": category1.name
+        "category_name": category1.name,
+        "record_date": "2022-01-01"
     }
     response = await client.post("/records", json=record_data, headers=headers)
     record_id = response.json()["id"]
