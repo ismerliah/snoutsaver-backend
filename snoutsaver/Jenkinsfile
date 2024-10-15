@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    environment {
+        WORKSPACE = pwd()
+        SQLDB_URL = "sqlite+aiosqlite:///./test-data/test-sqlalchemy.db"
+    }
+
+    stages {
+        stage('Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/ismerliah/snoutsaver-backend.git'
+            }
+        }
+
+        stage('Test') {
+            agent {
+                docker {
+                    image 'python:3.12'
+                    reuseNode true
+                    args '-u root'
+                }
+            }
+            steps {
+                // Navigate to the 'snoutsaver' directory where pyproject.toml exists
+                dir('snoutsaver') {
+                    // Install Poetry
+                    sh "pip install poetry"
+
+                    // Configure Poetry to use in-project virtual environments
+                    sh "poetry config virtualenvs.in-project true"
+
+                    // Install project dependencies
+                    sh "poetry install"
+
+                    // Run the test script
+                    sh "poetry run pytest -v"
+                }
+            }
+        }
+    }
+}
