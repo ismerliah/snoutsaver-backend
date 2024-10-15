@@ -122,6 +122,7 @@ async def oauth_token_user1(user1: models.DBUser) -> dict:
 async def example_category1(session: models.AsyncSession) -> models.DBCategory:
     name = "Food"
     type = "Expense"
+    icon = "fastfood_rounded"
 
     query = await session.exec(
         models.select(models.DBCategory).where(models.DBCategory.name == name).limit(1)
@@ -133,6 +134,7 @@ async def example_category1(session: models.AsyncSession) -> models.DBCategory:
     category = models.DBCategory(
         name=name,
         type=type,
+        icon=icon
     )
 
     session.add(category)
@@ -145,6 +147,7 @@ async def example_category1(session: models.AsyncSession) -> models.DBCategory:
 async def example_category2(session: models.AsyncSession) -> models.DBCategory:
     name = "Travel"
     type = "Expense"
+    icon = "flight_rounded"
 
     query = await session.exec(
         models.select(models.DBCategory).where(models.DBCategory.name == name).limit(1)
@@ -156,6 +159,7 @@ async def example_category2(session: models.AsyncSession) -> models.DBCategory:
     category = models.DBCategory(
         name=name,
         type=type,
+        icon=icon
     )
 
     session.add(category)

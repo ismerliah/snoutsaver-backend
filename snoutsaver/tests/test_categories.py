@@ -25,7 +25,8 @@ async def test_create_category(
     headers = {"Authorization": f"{token_user1.token_type} {token_user1.access_token}"}
     payload = {
         "name": "Travel",
-        "type": "Expense"
+        "type": "Expense",
+        "icon": "flight_rounded"
     }
     response = await client.post("/categories", json=payload, headers=headers)
 
@@ -33,6 +34,7 @@ async def test_create_category(
     data = response.json()
     assert data["name"] == payload["name"]
     assert data["type"] == payload["type"]
+    assert data["icon"] == payload["icon"]
 
 # Create Existing Category
 @pytest.mark.asyncio
@@ -42,7 +44,8 @@ async def test_create_existing_category(
     headers = {"Authorization": f"{token_user1.token_type} {token_user1.access_token}"}
     payload = {
         "name": category1.name,
-        "type": category1.type
+        "type": category1.type,
+        "icon": category1.icon
     }
     response = await client.post("/categories", json=payload, headers=headers)
 
@@ -148,11 +151,13 @@ async def test_update_category(
     
     new_name_payload = {
         "name": "Healthy Food",
-        "type": category1.type
+        "type": category1.type,
+        "icon": category1.icon
     }
     duplicate_name_payload = {
         "name": category2.name,
-        "type": category1.type
+        "type": category1.type,
+        "icon": category1.icon
     }
 
     # Valid category id & New name
@@ -162,6 +167,7 @@ async def test_update_category(
     data = valid_response_new_name.json()
     assert data["name"] == new_name_payload["name"]
     assert data["type"] == new_name_payload["type"]
+    assert data["icon"] == new_name_payload["icon"]
 
     # Valid category id & Duplicate name
     valid_response_duplicate_name = await client.put(f"/categories/{category1.id}", json=duplicate_name_payload, headers=headers)
